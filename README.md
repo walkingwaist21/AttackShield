@@ -28,7 +28,7 @@ It simulates how modern systems monitor malicious payloads and block repeated at
 
 1️⃣ Clone the repository
 
-git clone https://github.com/your-username/AttackShield.git
+git clone https://github.com/walkingwaist21/AttackShield
 cd AttackShield
 
 2️⃣ Install dependencies

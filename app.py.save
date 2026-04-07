@@ -1,0 +1,205 @@
+Last login: Tue Apr  7 09:42:44 on ttys000
+╭─    ~ ───────────────────────────────────────────────────────
+╭─    ~ ───────────────────────────────── ✔  03:43:11 PM  ─╮
+╰─ mysql -u root                                               ─╯
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 20
+Server version: 9.6.0 Homebrew
+
+Copyright (c) 2000, 2026, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> USE attack_logger;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> DROP TRIGGER IF EXISTS detect_sql_injection;
+Query OK, 0 rows affected (0.014 sec)
+
+mysql> DELIMITER $$
+mysql>
+mysql> CREATE TRIGGER detect_sql_injection
+    -> BEFORE INSERT ON Requests_Log
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF
+    ->         NEW.payload LIKE '%OR 1=1%' OR
+    ->         NEW.payload LIKE '%--%' OR
+    ->         NEW.payload LIKE '%UNION SELECT%' OR
+    ->         NEW.payload LIKE '%DROP TABLE%' OR
+    ->         NEW.payload LIKE '%SELECT * FROM%' OR
+    ->         NEW.payload LIKE '%" OR "1"="1%' OR
+    ->         NEW.payload LIKE '%admin\' --%'
+    ->     THEN
+    ->         SET NEW.attack_detected = TRUE;
+  UW PICO 5.09                    New Buffer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        [ Read 66 lines ]
+^G Get Help^O WriteOut^R Read Fil^Y Prev Pg ^K Cut Text^C Cur Pos
+^X Exit    ^J Justify ^W Where is^V Next Pg ^U UnCut Te^T To Spel
+    ->         SET NEW.attack_id = 1;
+    ->     END IF;
+    -> END$$
+Query OK, 0 rows affected (0.005 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql> USE attack_logger;
+Database changed
+mysql> DROP TRIGGER IF EXISTS detect_sql_injection;
+Query OK, 0 rows affected (0.004 sec)
+
+mysql> exit;
+Bye
+
+╭─    ~ ─────────────────────── ✔  4m 28s   03:53:11 PM  ─╮
+╰─ cd documents                                                ─╯
+
+╭─    ~/documents ─────────────────────── ✔  03:53:27 PM  ─╮
+╰─ cd AttackShield                                             ─╯
+
+╭─    ~/d/AttackShield    main !1 ?1 ── ✔  03:53:30 PM  ─╮
+╰─ ls                                                          ─╯
+app.py           README.md        templates
+db.sql           requirements.txt
+
+╭─    ~/d/AttackShield    main !1 ?1 ── ✔  03:53:32 PM  ─╮
+╰─ nano app.py                                                 ─╯
+
+╭─    ~/d/AttackShield    main !2 ?1 
+╰─ python3 app.py                                              ─╯
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 907-111-142
+127.0.0.1 - - [07/Apr/2026 15:57:43] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [07/Apr/2026 15:58:03] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [07/Apr/2026 15:58:13] "POST / HTTP/1.1" 200 -
+^C%
+
+╭─    ~/d/AttackShield    main !2 ?1 
+╰─ mysql -u root                                               ─╯
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 23
+Server version: 9.6.0 Homebrew
+
+Copyright (c) 2000, 2026, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> USE attack_logger;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> DROP TRIGGER IF EXISTS detect_sql_injection;
+Query OK, 0 rows affected, 1 warning (0.002 sec)
+
+mysql> DELIMITER $$
+mysql>
+mysql> CREATE TRIGGER detect_sql_injection
+    -> BEFORE INSERT ON Requests_Log
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF
+    ->         NEW.payload LIKE '%OR 1=1%' OR
+    ->         NEW.payload LIKE '%--%' OR
+    ->         NEW.payload LIKE '%UNION SELECT%' OR
+    ->         NEW.payload LIKE '%DROP TABLE%' OR
+    ->         NEW.payload LIKE '%SELECT * FROM%' OR
+    ->         NEW.payload LIKE '%" OR "1"="1%' OR
+    ->         NEW.payload LIKE '%\' --%' OR   -- THIS FIXES admin
+  UW PICO 5.09                    New Buffer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

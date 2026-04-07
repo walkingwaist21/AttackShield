@@ -3,6 +3,7 @@ import mysql.connector
 
 app = Flask(__name__)
 
+# Database connection
 db = mysql.connector.connect(
     host="localhost",
     user="root",
@@ -21,26 +22,21 @@ def index():
         payload = request.form["payload"]
         ip = request.remote_addr
 
-        cursor.execute("SELECT user_id FROM Users WHERE username=%s", (username,))
-        user = cursor.fetchone()
+        # Allow any username (no validation)
+        user_id = 1
 
-        if user:
-            user_id = user[0]
+        cursor.execute("""
+            INSERT INTO Requests_Log (user_id, ip_address, payload)
+            VALUES (%s, %s, %s)
+        """, (user_id, ip, payload))
 
-            cursor.execute("""
-                INSERT INTO Requests_Log (user_id, ip_address, payload)
-                VALUES (%s, %s, %s)
-            """, (user_id, ip, payload))
+        db.commit()
+        message = "Request Logged!"
 
-            db.commit()
-            message = "Request Logged!"
-
-        else:
-            message = "User not found!"
-
+    # Fetch logs
     cursor.execute("""
-        SELECT log_id, ip_address, payload, attack_detected 
-        FROM Requests_Log 
+        SELECT log_id, ip_address, payload, attack_detected
+        FROM Requests_Log
         ORDER BY log_id DESC
     """)
     logs = cursor.fetchall()
@@ -56,7 +52,7 @@ def block_ip():
         FROM Requests_Log
         WHERE attack_detected = TRUE
         GROUP BY ip_address
-        HAVING COUNT(*) >= 2
+        HAVING COUNT(*) >= 1
     """)
     db.commit()
     return "Blocked attackers!"
