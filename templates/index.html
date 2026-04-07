@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attack Logger</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #111;
+            color: white;
+            text-align: center;
+        }
+        input, textarea {
+            width: 300px;
+            padding: 10px;
+            margin: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background: red;
+            color: white;
+            border: none;
+        }
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        td, th {
+            border: 1px solid white;
+            padding: 8px;
+        }
+        .attack {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🔥 Attack Logging System</h1>
+
+<form method="POST">
+    <input type="text" name="username" placeholder="Username" required><br>
+    <textarea name="payload" placeholder="Enter request payload"></textarea><br>
+    <button type="submit">Send Request</button>
+</form>
+
+<p>{{ message }}</p>
+
+<h2>Logs</h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>IP</th>
+        <th>Payload</th>
+        <th>Attack?</th>
+    </tr>
+
+    {% for log in logs %}
+    <tr>
+        <td>{{ log[0] }}</td>
+        <td>{{ log[1] }}</td>
+        <td>{{ log[2] }}</td>
+        <td class="{{ 'attack' if log[3] else '' }}">
+            {{ 'YES' if log[3] else 'NO' }}
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+<br>
+<a href="/block_ip"><button>Block Attackers</button></a>
+
+</body>
+</html>
