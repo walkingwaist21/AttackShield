@@ -13,6 +13,7 @@ db = mysql.connector.connect(
 
 cursor = db.cursor()
 
+# Home page
 @app.route("/", methods=["GET", "POST"])
 def index():
     message = ""
@@ -20,9 +21,8 @@ def index():
     if request.method == "POST":
         username = request.form["username"]
         payload = request.form["payload"]
-        ip = request.remote_addr
+        ip = request.form["ip_address"]
 
-        # Allow any username (no validation)
         user_id = 1
 
         cursor.execute("""
@@ -33,7 +33,6 @@ def index():
         db.commit()
         message = "Request Logged!"
 
-    # Fetch logs
     cursor.execute("""
         SELECT log_id, ip_address, payload, attack_detected
         FROM Requests_Log
@@ -44,6 +43,7 @@ def index():
     return render_template("index.html", message=message, logs=logs)
 
 
+# Block IP route
 @app.route("/block_ip")
 def block_ip():
     cursor.execute("""
@@ -56,6 +56,37 @@ def block_ip():
     """)
     db.commit()
     return "Blocked attackers!"
+
+
+# Dashboard route
+@app.route("/dashboard")
+def dashboard():
+    cursor.execute("SELECT COUNT(*) FROM Requests_Log")
+    total_requests = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM Requests_Log WHERE attack_detected=TRUE")
+    total_attacks = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM Blocked_IPs")
+    blocked_ips = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT payload, COUNT(*)
+        FROM Requests_Log
+        WHERE attack_detected=TRUE
+        GROUP BY payload
+        ORDER BY COUNT(*) DESC
+        LIMIT 1
+    """)
+    top_attack = cursor.fetchone()
+
+    return render_template(
+        "dashboard.html",
+        total_requests=total_requests,
+        total_attacks=total_attacks,
+        blocked_ips=blocked_ips,
+        top_attack=top_attack
+    )
 
 
 if __name__ == "__main__":
